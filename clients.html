@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AllSub — Clients</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+
+    <style>
+        /* ============================================================
+           RESET & VARIABLES (identiques au dashboard)
+           ============================================================ */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --surface: #f8f9ff;
+            --surface-container: #e6eeff;
+            --surface-container-low: #eff4ff;
+            --surface-container-lowest: #ffffff;
+            --surface-container-high: #dee9fc;
+            --surface-container-highest: #d9e3f6;
+            --on-surface: #121c2a;
+            --on-surface-variant: #434655;
+            --outline: #737686;
+            --outline-variant: #c3c6d7;
+
+            --primary: #004ac6;
+            --primary-container: #2563eb;
+            --primary-fixed: #dbe1ff;
+            --on-primary: #ffffff;
+            --on-primary-fixed: #00174b;
+            --on-primary-fixed-variant: #003ea8;
+
+            --secondary: #0058be;
+            --secondary-container: #2170e4;
+            --tertiary: #005a82;
+            --tertiary-container: #0074a6;
+
+            --error: #ba1a1a;
+            --error-container: #ffdad6;
+            --on-error-container: #93000a;
+
+            --success: #059669;
+            --success-bg: #ecfdf5;
+            --warning: #d97706;
+            --warning-bg: #fffbeb;
+
+            --radius-lg: 0.5rem;
+            --radius-xl: 0.75rem;
+
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.1);
+
+            --font: 'Inter', 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--surface);
+            color: var(--on-surface);
+            font-size: 14px;
+            line-height: 20px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            font-size: 20px;
+            vertical-align: middle;
+        }
+
+        /* ============================================================
+           SIDEBAR (identique au dashboard)
+           ============================================================ */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 260px;
+            background: var(--surface-container-lowest);
+            border-right: 1px solid var(--outline-variant);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 50;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .sidebar-header { padding: 24px 20px 16px; }
+
+        .logo { display: flex; align-items: center; gap: 10px; }
+
+        .logo-icon {
+            width: 36px; height: 36px;
+            background: var(--primary-container);
+            color: var(--on-primary);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .logo-text { display: flex; flex-direction: column; }
+
+        .logo-name {
+            font-size: 16px; font-weight: 700;
+            color: var(--primary); letter-spacing: -0.3px;
+        }
+
+        .logo-sub { font-size: 11px; color: var(--on-surface-variant); font-weight: 500; }
+
+        .sidebar-section { padding: 8px 16px; }
+
+        .section-label {
+            font-size: 11px; text-transform: uppercase;
+            letter-spacing: 0.5px; color: var(--outline);
+            font-weight: 600; padding-left: 12px;
+            margin-bottom: 6px; display: block;
+        }
+
+        .nav { display: flex; flex-direction: column; gap: 2px; padding: 0 8px; }
+
+        .nav-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 16px;
+            border-radius: 0 8px 8px 0;
+            color: var(--on-surface-variant);
+            font-weight: 500; font-size: 13px;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .nav-item:hover { background: var(--surface-container-low); color: var(--primary); }
+
+        .nav-item.active {
+            background: var(--surface-container-low);
+            color: var(--primary);
+            font-weight: 600;
+            border-left: 3px solid var(--primary);
+            border-radius: 0 8px 8px 0;
+            padding-left: 13px;
+        }
+
+        .sidebar-footer { padding: 16px; }
+
+        .agent-card {
+            background: var(--surface-container-low);
+            border-radius: var(--radius-xl);
+            padding: 10px;
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 8px;
+        }
+
+        .agent-info { display: flex; align-items: center; gap: 10px; min-width: 0; }
+
+        .agent-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: var(--primary); color: var(--on-primary);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; flex-shrink: 0; font-size: 14px;
+        }
+
+        .agent-text { display: flex; flex-direction: column; min-width: 0; }
+
+        .agent-name {
+            font-size: 13px; font-weight: 600;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+
+        .agent-role { font-size: 11px; color: var(--primary); font-weight: 500; }
+
+        .agent-actions { display: flex; gap: 2px; }
+
+        .icon-btn {
+            width: 28px; height: 28px;
+            border: none; background: transparent;
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--on-surface-variant);
+            transition: background 0.15s;
+        }
+
+        .icon-btn:hover { background: var(--surface-container-high); }
+
+        /* ============================================================
+           TOPBAR
+           ============================================================ */
+        .topbar {
+            position: fixed; top: 0; left: 260px; right: 0;
+            height: 64px;
+            background: rgba(248, 249, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--outline-variant);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 40px; z-index: 40;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .search-box { position: relative; display: flex; align-items: center; }
+
+        .search-box .material-symbols-outlined {
+            position: absolute; left: 12px;
+            color: var(--on-surface-variant); font-size: 18px;
+        }
+
+        .search-box input {
+            width: 288px; height: 38px;
+            padding: 0 12px 0 38px;
+            background: var(--surface-container-lowest);
+            border: 1px solid transparent;
+            border-radius: 8px;
+            font-family: var(--font); font-size: 13px;
+            color: var(--on-surface); outline: none;
+            transition: border 0.15s;
+        }
+
+        .search-box input:focus { border-color: var(--primary); }
+        .search-box input::placeholder { color: var(--outline); }
+
+        .topbar-actions { display: flex; align-items: center; gap: 12px; }
+
+        .topbar-btn {
+            position: relative;
+            width: 36px; height: 36px;
+            border: none; background: transparent;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--on-surface-variant);
+            transition: background 0.15s;
+        }
+
+        .topbar-btn:hover { background: var(--surface-container-high); }
+
+        .notif-dot {
+            position: absolute; top: 8px; right: 8px;
+            width: 8px; height: 8px;
+            background: var(--primary); border-radius: 50%;
+            border: 2px solid var(--surface);
+        }
+
+        .topbar-avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: var(--primary); color: var(--on-primary);
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* ============================================================
+           CONTENU
+           ============================================================ */
+        .main {
+            margin-left: 260px;
+            padding: 96px 40px 40px;
+            min-height: 100vh;
+        }
+
+        /* ============================================================
+           KPI
+           ============================================================ */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .kpi-mini {
+            background: var(--surface-container-lowest);
+            border-radius: var(--radius-xl);
+            padding: 16px 20px;
+            box-shadow: var(--shadow-sm);
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 12px;
+            transition: box-shadow 0.2s;
+        }
+
+        .kpi-mini:hover { box-shadow: var(--shadow-md); }
+
+        .kpi-mini-content { display: flex; flex-direction: column; gap: 4px; }
+
+        .kpi-mini-label {
+            font-size: 11px; text-transform: uppercase;
+            letter-spacing: 0.5px; color: var(--outline); font-weight: 600;
+        }
+
+        .kpi-mini-value {
+            font-size: 24px; font-weight: 700;
+            letter-spacing: -0.5px; line-height: 1.2;
+        }
+
+        .kpi-mini-icon {
+            width: 40px; height: 40px; border-radius: 10px;
+            background: var(--surface-container-low);
+            color: var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .kpi-mini-icon.secondary { color: var(--secondary); }
+        .kpi-mini-icon.tertiary { color: var(--tertiary); }
+        .kpi-mini-icon.error { color: var(--error); background: var(--error-container); }
+
+        /* ============================================================
+           EN-TÊTE
+           ============================================================ */
+        .page-header {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            gap: 16px; margin-bottom: 24px; flex-wrap: wrap;
+        }
+
+        .page-title-block { display: flex; flex-direction: column; gap: 4px; }
+
+        .page-title-row { display: flex; align-items: center; gap: 10px; }
+
+        .page-title h1 {
+            font-size: 28px; font-weight: 700;
+            letter-spacing: -0.5px; color: var(--on-surface);
+        }
+
+        .count-badge {
+            padding: 3px 10px;
+            background: var(--surface-container-high);
+            color: var(--primary);
+            font-size: 11px; font-weight: 600;
+            border-radius: 20px;
+        }
+
+        .page-subtitle {
+            font-size: 13px; color: var(--on-surface-variant);
+        }
+
+        .page-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+        .btn {
+            height: 38px; padding: 0 16px;
+            border: none; border-radius: 8px;
+            font-family: var(--font); font-size: 13px; font-weight: 500;
+            cursor: pointer;
+            display: inline-flex; align-items: center; gap: 6px;
+            transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+        }
+
+        .btn:active { transform: scale(0.97); }
+        .btn .material-symbols-outlined { font-size: 18px; }
+
+        .btn-primary {
+            background: var(--primary); color: var(--on-primary);
+            box-shadow: var(--shadow-sm);
+        }
+        .btn-primary:hover { background: var(--secondary); }
+
+        .btn-surface {
+            background: var(--surface-container-lowest);
+            color: var(--on-surface);
+            box-shadow: var(--shadow-sm);
+        }
+        .btn-surface:hover { background: var(--surface-container-low); }
+
+        /* ============================================================
+           BARRE DE RECHERCHE & FILTRES
+           ============================================================ */
+        .filters-bar {
+            background: var(--surface-container-lowest);
+            border-radius: var(--radius-xl);
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+            display: flex; align-items: center; gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .search-field {
+            position: relative; flex: 1; min-width: 240px;
+        }
+
+        .search-field .material-symbols-outlined {
+            position: absolute; left: 12px; top: 50%;
+            transform: translateY(-50%);
+            color: var(--outline); font-size: 18px;
+        }
+
+        .search-field input {
+            width: 100%; height: 38px;
+            padding: 0 12px 0 38px;
+            background: var(--surface-container-low);
+            border: 1px solid transparent;
+            border-radius: 8px;
+            font-family: var(--font); font-size: 13px;
+            color: var(--on-surface); outline: none;
+            transition: border 0.15s, background 0.15s;
+        }
+
+        .search-field input:focus {
+            border-color: var(--primary);
+            background: var(--surface-container-lowest);
+        }
+
+        .search-field input::placeholder { color: var(--outline); }
+
+        .filter-select {
+            height: 38px;
+            padding: 0 32px 0 12px;
+            background: var(--surface-container-low);
+            border: 1px solid transparent;
+            border-radius: 8px;
+            font-family: var(--font); font-size: 13px;
+            color: var(--on-surface);
+            cursor: pointer; outline: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23737686' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+        }
+
+        .filter-select:focus { border-color: var(--primary); }
+
+        .btn-icon-filter {
+            width: 38px; height: 38px;
+            background: var(--surface-container-low);
+            border: none; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--on-surface-variant);
+            transition: background 0.15s;
+        }
+
+        .btn-icon-filter:hover { background: var(--surface-container-high); }
+
+        /* ============================================================
+           TABLEAU
+           ============================================================ */
+        .table-card {
+            background: var(--surface-container-lowest);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%; border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .data-table thead tr {
+            background: var(--surface-container-low);
+        }
+
+        .data-table th {
+            padding: 12px 16px; text-align: left;
+            font-size: 11px; text-transform: uppercase;
+            letter-spacing: 0.5px; color: var(--outline);
+            font-weight: 600;
+        }
+
+        .data-table th.right { text-align: right; }
+        .data-table th.center { text-align: center; }
+
+        .data-table tbody tr {
+            border-top: 1px solid var(--surface-container-low);
+            transition: background 0.15s;
+            cursor: pointer;
+        }
+
+        .data-table tbody tr:hover {
+            background: var(--surface);
+        }
+
+        .data-table td {
+            padding: 14px 16px;
+            color: var(--on-surface);
+            vertical-align: middle;
+        }
+
+        .data-table td.right { text-align: right; }
+        .data-table td.center { text-align: center; }
+
+        .client-cell { display: flex; align-items: center; gap: 10px; }
+
+        .client-avatar {
+            width: 36px; height: 36px; border-radius: 10px;
+            background: var(--surface-container-high);
+            color: var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .client-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+
+        .client-name {
+            font-size: 13px; font-weight: 600;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+
+        .client-meta {
+            font-size: 11px; color: var(--outline);
+            font-family: 'Courier New', monospace;
+        }
+
+        .service-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px; font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .service-badge.internet {
+            background: rgba(37, 99, 235, 0.1); color: var(--primary);
+        }
+        .service-badge.hebergement {
+            background: rgba(0, 88, 190, 0.1); color: var(--secondary);
+        }
+        .service-badge.infogerance {
+            background: rgba(0, 90, 130, 0.1); color: var(--tertiary);
+        }
+
+        .badge-status {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px; font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .badge-status.ok { background: var(--success-bg); color: var(--success); }
+        .badge-status.warning { background: var(--warning-bg); color: var(--warning); }
+        .badge-status.error { background: var(--error-container); color: var(--error); }
+
+        .badge-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: currentColor;
+        }
+
+        .amount-cell { font-weight: 600; white-space: nowrap; }
+        .amount-unit { font-size: 11px; color: var(--outline); font-weight: 400; }
+
+        .row-actions {
+            display: flex; gap: 4px;
+            justify-content: flex-end;
+        }
+
+        .action-btn {
+            width: 30px; height: 30px;
+            border: none; background: transparent;
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--on-surface-variant);
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .action-btn:hover {
+            background: var(--surface-container-high);
+            color: var(--primary);
+        }
+
+        .action-btn.danger:hover {
+            background: var(--error-container);
+            color: var(--error);
+        }
+
+        .table-footer {
+            padding: 14px 24px;
+            background: var(--surface-container-low);
+            display: flex; align-items: center; justify-content: space-between;
+            font-size: 12px; color: var(--on-surface-variant);
+        }
+
+        .pagination { display: flex; gap: 4px; }
+
+        .page-btn {
+            width: 32px; height: 32px;
+            border: none; background: var(--surface-container-lowest);
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--on-surface);
+            font-family: var(--font); font-size: 12px; font-weight: 600;
+            box-shadow: var(--shadow-sm);
+            transition: background 0.15s;
+        }
+
+        .page-btn:hover:not(:disabled) { background: var(--surface-container-high); }
+
+        .page-btn.active {
+            background: var(--primary); color: var(--on-primary);
+        }
+
+        .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* ============================================================
+           MODAL NOUVEAU CLIENT
+           ============================================================ */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(18, 28, 42, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center; justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: var(--surface-container-lowest);
+            border-radius: var(--radius-xl);
+            width: 100%; max-width: 620px;
+            max-height: 90vh; overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.25s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--surface-container-low);
+        }
+
+        .modal-title-block { display: flex; align-items: center; gap: 12px; }
+
+        .modal-icon {
+            width: 40px; height: 40px; border-radius: 10px;
+            background: var(--primary-container); color: var(--on-primary);
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .modal-title h2 {
+            font-size: 18px; font-weight: 700;
+            color: var(--on-surface); letter-spacing: -0.3px;
+        }
+
+        .modal-subtitle { font-size: 12px; color: var(--on-surface-variant); }
+
+        .modal-close {
+            width: 32px; height: 32px;
+            border: none; background: transparent;
+            border-radius: 6px; cursor: pointer;
+            color: var(--on-surface-variant);
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.15s;
+        }
+
+        .modal-close:hover { background: var(--surface-container-high); }
+
+        .modal-body { padding: 24px; }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group.full { grid-column: 1 / -1; }
+
+        .form-label {
+            font-size: 12px; font-weight: 600;
+            color: var(--on-surface);
+        }
+
+        .form-label .required { color: var(--error); }
+
+        .form-input {
+            height: 40px; padding: 0 12px;
+            background: var(--surface-container-low);
+            border: 1px solid transparent;
+            border-radius: 8px;
+            font-family: var(--font); font-size: 13px;
+            color: var(--on-surface); outline: none;
+            transition: border 0.15s, background 0.15s;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+            background: var(--surface-container-lowest);
+        }
+
+        .form-input::placeholder { color: var(--outline); }
+
+        /* Cartes service */
+        .service-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .service-card {
+            padding: 14px 10px;
+            background: var(--surface-container-low);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: border 0.15s, background 0.15s;
+        }
+
+        .service-card:hover { border-color: var(--primary); }
+
+        .service-card.selected {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.06);
+        }
+
+        .service-card input { display: none; }
+
+        .service-icon {
+            width: 32px; height: 32px;
+            margin: 0 auto 6px;
+            background: var(--surface-container-high);
+            color: var(--primary);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .service-card.selected .service-icon {
+            background: var(--primary);
+            color: var(--on-primary);
+        }
+
+        .service-label {
+            font-size: 12px; font-weight: 600;
+            color: var(--on-surface);
+        }
+
+        .service-cycle {
+            font-size: 10px; color: var(--outline);
+            margin-top: 2px;
+        }
+
+        /* Preview échéance */
+        .echeance-preview {
+            margin-top: 12px;
+            padding: 12px;
+            background: var(--success-bg);
+            border-left: 3px solid var(--success);
+            border-radius: 8px;
+            font-size: 12px;
+            color: var(--success);
+        }
+
+        .echeance-preview strong { font-weight: 700; }
+
+        .modal-footer {
+            display: flex; justify-content: flex-end; gap: 8px;
+            padding-top: 20px; margin-top: 8px;
+            border-top: 1px solid var(--surface-container-low);
+        }
+
+        /* ============================================================
+           EMPTY STATE
+           ============================================================ */
+        .empty-state {
+            padding: 60px 20px;
+            text-align: center;
+            color: var(--on-surface-variant);
+        }
+
+        .empty-state .material-symbols-outlined {
+            font-size: 56px; color: var(--outline);
+            margin-bottom: 12px; display: block;
+        }
+
+        .empty-state p { font-size: 14px; margin-bottom: 16px; }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 1200px) {
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 900px) {
+            .sidebar { width: 70px; }
+            .sidebar .logo-text,
+            .sidebar .section-label,
+            .sidebar .nav-item span:not(.material-symbols-outlined),
+            .sidebar .agent-text,
+            .sidebar .agent-actions { display: none; }
+            .nav-item { justify-content: center; padding: 12px; }
+            .topbar { left: 70px; padding: 0 20px; }
+            .search-box input { width: 200px; }
+            .main { margin-left: 70px; padding: 96px 20px 20px; }
+            .filters-bar { flex-direction: column; align-items: stretch; }
+            .page-header { flex-direction: column; align-items: flex-start; }
+        }
+
+        @media (max-width: 600px) {
+            .kpi-grid { grid-template-columns: 1fr; }
+            .search-box input { width: 140px; }
+            .page-title h1 { font-size: 22px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .service-cards { grid-template-columns: 1fr; }
+            .data-table th,
+            .data-table td { padding: 10px 8px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ============================================================
+     SIDEBAR
+     ============================================================ -->
+<aside class="sidebar">
+    <div>
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-name">AllSub</span>
+                    <span class="logo-sub">par AllSolutions</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <span class="section-label">Principal</span>
+        </div>
+        <nav class="nav">
+            <a href="dashboard.html" class="nav-item">
+                <span class="material-symbols-outlined">bar_chart</span>
+                <span>Accueil</span>
+            </a>
+            <a href="clients.html" class="nav-item active">
+                <span class="material-symbols-outlined">group</span>
+                <span>Clients</span>
+            </a>
+            <a href="contrats.html" class="nav-item">
+                <span class="material-symbols-outlined">description</span>
+                <span>Contrats</span>
+            </a>
+            <a href="echeances.html" class="nav-item">
+                <span class="material-symbols-outlined">event_upcoming</span>
+                <span>Échéances</span>
+            </a>
+            <a href="factures.html" class="nav-item">
+                <span class="material-symbols-outlined">receipt_long</span>
+                <span>Factures</span>
+            </a>
+            <a href="relances.html" class="nav-item">
+                <span class="material-symbols-outlined">mark_email_read</span>
+                <span>Relances</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-section">
+            <span class="section-label">Portail</span>
+        </div>
+        <nav class="nav">
+            <a href="espace-client.html" class="nav-item">
+                <span class="material-symbols-outlined">language</span>
+                <span>Espace Client</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="sidebar-footer">
+        <div class="agent-card">
+            <div class="agent-info">
+                <div class="agent-avatar">A</div>
+                <div class="agent-text">
+                    <span class="agent-name">Agent AllSol</span>
+                    <span class="agent-role">Administrateur</span>
+                </div>
+            </div>
+            <div class="agent-actions">
+                <button class="icon-btn" title="Paramètres">
+                    <span class="material-symbols-outlined" style="font-size: 16px;">settings</span>
+                </button>
+                <button class="icon-btn" title="Déconnexion">
+                    <span class="material-symbols-outlined" style="font-size: 16px;">logout</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<!-- ============================================================
+     TOPBAR
+     ============================================================ -->
+<header class="topbar">
+    <div class="search-box">
+        <span class="material-symbols-outlined">search</span>
+        <input type="search" placeholder="Rechercher client, contrat, SIRET...">
+    </div>
+
+    <div class="topbar-actions">
+        <button class="topbar-btn" title="Notifications">
+            <span class="material-symbols-outlined">notifications</span>
+            <span class="notif-dot"></span>
+        </button>
+        <button class="topbar-btn" title="Filtres">
+            <span class="material-symbols-outlined">tune</span>
+        </button>
+        <div class="topbar-avatar">
+            <span class="material-symbols-outlined" style="font-size: 18px;">person</span>
+        </div>
+    </div>
+</header>
+
+<!-- ============================================================
+     CONTENU
+     ============================================================ -->
+<main class="main">
+
+    <!-- ===== KPI mini ===== -->
+    <div class="kpi-grid">
+        <div class="kpi-mini">
+            <div class="kpi-mini-content">
+                <span class="kpi-mini-label">Internet</span>
+                <span class="kpi-mini-value" id="kpi-internet">0</span>
+            </div>
+            <div class="kpi-mini-icon">
+                <span class="material-symbols-outlined">wifi</span>
+            </div>
+        </div>
+
+        <div class="kpi-mini">
+            <div class="kpi-mini-content">
+                <span class="kpi-mini-label">Hébergement</span>
+                <span class="kpi-mini-value" id="kpi-hebergement">0</span>
+            </div>
+            <div class="kpi-mini-icon secondary">
+                <span class="material-symbols-outlined">cloud</span>
+            </div>
+        </div>
+
+        <div class="kpi-mini">
+            <div class="kpi-mini-content">
+                <span class="kpi-mini-label">Infogérance</span>
+                <span class="kpi-mini-value" id="kpi-infogerance">0</span>
+            </div>
+            <div class="kpi-mini-icon tertiary">
+                <span class="material-symbols-outlined">settings</span>
+            </div>
+        </div>
+
+        <div class="kpi-mini">
+            <div class="kpi-mini-content">
+                <span class="kpi-mini-label">En retard</span>
+                <span class="kpi-mini-value" id="kpi-enretard" style="color: var(--error);">0</span>
+            </div>
+            <div class="kpi-mini-icon error">
+                <span class="material-symbols-outlined">warning</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== EN-TÊTE ===== -->
+    <div class="page-header">
+        <div class="page-title-block">
+            <div class="page-title-row">
+                <h1>Répertoire Clients</h1>
+                <span class="count-badge"><span id="clients-count">0</span> enregistrés</span>
+            </div>
+            <p class="page-subtitle">Gestion des fiches abonnés, coordonnées et historique des services</p>
+        </div>
+
+        <div class="page-actions">
+            <button class="btn btn-surface">
+                <span class="material-symbols-outlined">download</span>
+                Exporter CSV
+            </button>
+            <button class="btn btn-primary" onclick="openModal('newClient')">
+                <span class="material-symbols-outlined">add</span>
+                Nouveau client
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== BARRE DE FILTRES ===== -->
+    <div class="filters-bar">
+        <div class="search-field">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" placeholder="Rechercher par nom, email, SIRET..." id="searchInput">
+        </div>
+
+        <select class="filter-select" id="filterService">
+            <option value="">Tous les services</option>
+            <option value="Internet">Internet</option>
+            <option value="Hébergement">Hébergement</option>
+            <option value="Infogérance">Infogérance</option>
+        </select>
+
+        <select class="filter-select" id="filterStatut">
+            <option value="">Tous les statuts</option>
+            <option value="ok">À jour</option>
+            <option value="warning">Bientôt</option>
+            <option value="error">En retard</option>
+        </select>
+
+        <button class="btn-icon-filter" title="Réinitialiser">
+            <span class="material-symbols-outlined">filter_alt_off</span>
+        </button>
+    </div>
+
+    <!-- ===== TABLEAU ===== -->
+    <div class="table-card">
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Client / Société</th>
+                        <th>Contact</th>
+                        <th>Service</th>
+                        <th>Cycle</th>
+                        <th class="right">Montant</th>
+                        <th>Échéance</th>
+                        <th class="center">Statut</th>
+                        <th class="right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="clientsBody">
+                    <!-- Rempli par JS -->
+                </tbody>
+            </table>
+
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <span class="material-symbols-outlined">inbox</span>
+                <p>Aucun client enregistré pour le moment.</p>
+                <button class="btn btn-primary" onclick="openModal('newClient')">
+                    <span class="material-symbols-outlined">add</span>
+                    Enregistrer le premier client
+                </button>
+            </div>
+        </div>
+
+        <div class="table-footer">
+            <span>Affichage de <strong id="footer-shown">0</strong> clients sur <strong id="footer-total">0</strong></span>
+            <div class="pagination">
+                <button class="page-btn" disabled>
+                    <span class="material-symbols-outlined" style="font-size: 16px;">chevron_left</span>
+                </button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn">
+                    <span class="material-symbols-outlined" style="font-size: 16px;">chevron_right</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<!-- ============================================================
+     MODAL : NOUVEAU CLIENT
+     ============================================================ -->
+<div class="modal-overlay" id="modal-newClient">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title-block">
+                <div class="modal-icon">
+                    <span class="material-symbols-outlined">person_add</span>
+                </div>
+                <div class="modal-title">
+                    <h2>Nouveau client</h2>
+                    <p class="modal-subtitle">Créer une fiche abonné dans AllSub</p>
+                </div>
+            </div>
+            <button class="modal-close" onclick="closeModal('newClient')">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <form class="modal-body" id="newClientForm">
+            <!-- Choix du service -->
+            <div class="form-group full">
+                <label class="form-label">Service souscrit <span class="required">*</span></label>
+                <div class="service-cards">
+                    <label class="service-card">
+                        <input type="radio" name="service" value="Internet">
+                        <div class="service-icon">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">wifi</span>
+                        </div>
+                        <div class="service-label">Internet</div>
+                        <div class="service-cycle">Mensuel</div>
+                    </label>
+
+                    <label class="service-card">
+                        <input type="radio" name="service" value="Hébergement">
+                        <div class="service-icon">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">cloud</span>
+                        </div>
+                        <div class="service-label">Hébergement</div>
+                        <div class="service-cycle">Annuel</div>
+                    </label>
+
+                    <label class="service-card">
+                        <input type="radio" name="service" value="Infogérance">
+                        <div class="service-icon">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">settings</span>
+                        </div>
+                        <div class="service-label">Infogérance</div>
+                        <div class="service-cycle">Mensuel</div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Infos client -->
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Nom complet <span class="required">*</span></label>
+                    <input type="text" class="form-input" id="inputNom" placeholder="Ex : Jean Dupont">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email <span class="required">*</span></label>
+                    <input type="email" class="form-input" id="inputEmail" placeholder="client@exemple.com">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Téléphone</label>
+                    <input type="tel" class="form-input" id="inputTel" placeholder="+243 812 345 678">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Montant (USD) <span class="required">*</span></label>
+                    <input type="number" class="form-input" id="inputMontant" placeholder="50.00" step="0.01" min="0">
+                </div>
+
+                <div class="form-group full">
+                    <label class="form-label">Date de début <span class="required">*</span></label>
+                    <input type="date" class="form-input" id="inputDateDebut">
+                </div>
+            </div>
+
+            <!-- Preview échéance -->
+            <div class="echeance-preview" id="echeancePreview" style="display: none;">
+                <strong>📅 Échéance calculée automatiquement :</strong>
+                <span id="echeanceDate">—</span>
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-surface" onclick="closeModal('newClient')">
+                    Annuler
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <span class="material-symbols-outlined">check</span>
+                    Enregistrer le client
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============================================================
+     MODAL : AJOUTER UN SERVICE
+     ============================================================ -->
+<div class="modal-overlay" id="modal-addService">
+    <div class="modal" style="max-width: 480px;">
+        <div class="modal-header">
+            <div class="modal-title-block">
+                <div class="modal-icon">
+                    <span class="material-symbols-outlined">add_circle</span>
+                </div>
+                <div class="modal-title">
+                    <h2>Ajouter un service</h2>
+                    <p class="modal-subtitle" id="addServiceClientName">—</p>
+                </div>
+            </div>
+            <button class="modal-close" onclick="closeModal('addService')">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <form class="modal-body" id="addServiceForm">
+            <input type="hidden" id="addServiceClientId">
+
+            <div class="form-group full">
+                <label class="form-label">Service à ajouter <span class="required">*</span></label>
+                <div class="service-cards">
+                    <label class="service-card">
+                        <input type="radio" name="addService" value="Internet">
+                        <div class="service-icon">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">wifi</span>
+                        </div>
+                        <div class="service-label">Internet</div>
+                    </label>
+                    <label class="service-card">
+                        <input type="radio" name="addService" value="Hébergement">
+                        <div class="service-icon">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">cloud</span>
+                        </div>
+                        <div class="service-label">Hébergement</div>
+                    </label>
+                    <label class="service-card">
+                        <input type="radio" name="addService" value="Infogérance">
+                        <div class="service-icon">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">settings</span>
+                        </div>
+                        <div class="service-label">Infogérance</div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group full" style="margin-top: 16px;">
+                <label class="form-label">Montant additionnel (USD) <span class="required">*</span></label>
+                <input type="number" class="form-input" id="addServiceMontant" placeholder="50.00" step="0.01" min="0">
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-surface" onclick="closeModal('addService')">
+                    Annuler
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <span class="material-symbols-outlined">check</span>
+                    Ajouter le service
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============================================================
+     DATA.JS — Base partagée
+     ============================================================ -->
+<script src="data.js"></script>
+<script>
+    /* ============================================================
+       HELPERS
+       ============================================================ */
+    function formatDate(date) {
+        if (!date) return '—';
+        return new Date(date).toLocaleDateString('fr-FR', {
+            day: '2-digit', month: '2-digit', year: 'numeric'
+        });
+    }
+
+    function joursRestants(echeance) {
+        if (!echeance) return Infinity;
+        const now = new Date();
+        const diff = new Date(echeance) - now;
+        return Math.ceil(diff / (1000 * 60 * 60 * 24));
+    }
+
+    function statutClient(echeance) {
+        const jours = joursRestants(echeance);
+        if (jours < 0)  return { class: 'error',   label: '🔴 En retard' };
+        if (jours <= 5) return { class: 'warning', label: '🟡 Bientôt' };
+        return             { class: 'ok',      label: '🟢 À jour' };
+    }
+
+    function cycleClient(service) {
+        return service === 'Hébergement' ? 'Annuel' : 'Mensuel';
+    }
+
+    function updateStats() {
+        const stats = getStats();
+        const setText = (id, value) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = value;
+        };
+        setText('kpi-internet', stats.internet);
+        setText('kpi-hebergement', stats.hebergement);
+        setText('kpi-infogerance', stats.infogerance);
+        setText('kpi-enretard', stats.enRetard);
+        setText('clients-count', stats.total);
+        setText('footer-total', stats.total);
+    }
+
+    function openModal(name) {
+        document.getElementById('modal-' + name).classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(name) {
+        document.getElementById('modal-' + name).classList.remove('active');
+        document.body.style.overflow = '';
+        if (name === 'newClient') {
+            document.getElementById('newClientForm').reset();
+            document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
+            document.getElementById('echeancePreview').style.display = 'none';
+        }
+    }
+
+    function showToast(message, type = 'success') {
+        // Toast simple (à améliorer)
+        const existing = document.getElementById('toast');
+        if (existing) existing.remove();
+        
+        const toast = document.createElement('div');
+        toast.id = 'toast';
+        toast.textContent = message;
+        toast.style.cssText = `
+            position: fixed; bottom: 30px; right: 30px;
+            background: ${type === 'success' ? '#059669' : '#ba1a1a'};
+            color: white; padding: 14px 24px;
+            border-radius: 10px; font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 2000; animation: slideIn 0.3s ease;
+        `;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3500);
+    }
+
+    /* ============================================================
+       RENDU DES CLIENTS
+       ============================================================ */
+    function renderClients() {
+        const tbody = document.getElementById('clientsBody');
+        const empty = document.getElementById('emptyState');
+
+        const filterService = document.getElementById('filterService').value;
+        const filterStatut  = document.getElementById('filterStatut').value;
+        const search        = document.getElementById('searchInput').value.toLowerCase();
+
+        let filtered = DB.clients.filter(c => {
+            if (filterService && c.service !== filterService) return false;
+            if (filterStatut) {
+                const s = statutClient(c.dateFin).class;
+                if (s !== filterStatut) return false;
+            }
+            if (search) {
+                const text = `${c.nom} ${c.email} ${c.tel}`.toLowerCase();
+                if (!text.includes(search)) return false;
+            }
+            return true;
+        });
+
+        const footerShown = document.getElementById('footer-shown');
+        if (footerShown) footerShown.textContent = filtered.length;
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = '';
+            empty.style.display = 'block';
+            return;
+        }
+        empty.style.display = 'none';
+
+        tbody.innerHTML = filtered.map(c => {
+            const statut = statutClient(c.dateFin);
+            const badgeClass = c.service === 'Internet' ? 'internet'
+                             : c.service === 'Hébergement' ? 'hebergement' : 'infogerance';
+
+            return `
+                <tr>
+                    <td>
+                        <div class="client-cell">
+                            <div class="client-avatar">${getInitials(c.nom)}</div>
+                            <div class="client-info">
+                                <span class="client-name">${c.nom}</span>
+                                <span class="client-meta">ID ${c.id.toString().padStart(4, '0')}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="client-info">
+                            <span style="font-size: 13px;">${c.email}</span>
+                            <span style="font-size: 11px; color: var(--outline);">${c.tel}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="service-badge ${badgeClass}">${c.service}</span>
+                        ${(c.services || []).map(s => {
+                            const cls = s.service === 'Internet' ? 'internet'
+                                      : s.service === 'Hébergement' ? 'hebergement' : 'infogerance';
+                            return `<span class="service-badge ${cls}" style="margin-left:4px;">${s.service}</span>`;
+                        }).join('')}
+                    </td>
+                    <td>${cycleClient(c.service)}</td>
+                    <td class="right amount-cell">${Number(c.montant).toFixed(2)} USD</td>
+                    <td>${formatDate(c.dateFin)}</td>
+                    <td class="center">
+                        <span class="badge-status ${statut.class}">
+                            <span class="badge-dot"></span>
+                            ${statut.label.split(' ')[1]}
+                        </span>
+                    </td>
+                    <td class="right">
+                        <div class="row-actions">
+                            <button class="action-btn" title="Voir">
+                                <span class="material-symbols-outlined" style="font-size: 18px;">visibility</span>
+                            </button>
+                            <button class="action-btn" title="Modifier">
+                                <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
+                            </button>
+                            <button class="action-btn" title="Ajouter un service" onclick="openAddService(${c.id})">
+                                <span class="material-symbols-outlined" style="font-size: 18px;">add_circle</span>
+                            </button>
+                            <button class="action-btn danger" title="Supprimer" onclick="supprimerClient(${c.id})">
+                                <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function getInitials(nom) {
+        return nom.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    }
+
+    /* ============================================================
+       AJOUT CLIENT
+       ============================================================ */
+    document.getElementById('newClientForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const service = document.querySelector('input[name="service"]:checked')?.value;
+        const nom     = document.getElementById('inputNom').value.trim();
+        const email   = document.getElementById('inputEmail').value.trim();
+        const tel     = document.getElementById('inputTel').value.trim();
+        const montant = parseFloat(document.getElementById('inputMontant').value);
+        const dateDebut = document.getElementById('inputDateDebut').value;
+
+        // Validations
+        if (!service)           return showToast('Choisissez un service', 'error');
+        if (nom.length < 2)     return showToast('Nom invalide', 'error');
+        if (!/\S+@\S+\.\S+/.test(email)) return showToast('Email invalide', 'error');
+        if (isNaN(montant))     return showToast('Montant invalide', 'error');
+        if (!dateDebut)         return showToast('Date de début requise', 'error');
+
+        // Calcul échéance
+        const echeance = new Date(dateDebut);
+        if (service === 'Hébergement') {
+            echeance.setFullYear(echeance.getFullYear() + 1);
+        } else {
+            echeance.setMonth(echeance.getMonth() + 1);
+        }
+
+        // Créer le client via data.js
+        ajouterClient({
+            nom, email, tel, montant,
+            service,
+            dateDebut,
+            dateFin: echeance.toISOString().slice(0, 10)
+        });
+        renderClients();
+        updateStats();
+        closeModal('newClient');
+        showToast(`✅ ${nom} enregistré avec succès`, 'success');
+    });
+
+    /* ============================================================
+       SUPPRESSION
+       ============================================================ */
+    function supprimerClient(id) {
+        if (!confirm('Supprimer ce client ?')) return;
+        DB.clients = DB.clients.filter(c => c.id !== id);
+        saveDB();
+        renderClients();
+        updateStats();
+        showToast('🗑️ Client supprimé', 'success');
+    }
+
+    /* ============================================================
+       SÉLECTION DU SERVICE (cartes visuelles)
+       ============================================================ */
+    document.querySelectorAll('.service-card').forEach(card => {
+        card.addEventListener('click', () => {
+            document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            card.querySelector('input').checked = true;
+            updateEcheancePreview();
+        });
+    });
+
+    /* ============================================================
+       APERÇU ÉCHÉANCE EN DIRECT
+       ============================================================ */
+    function updateEcheancePreview() {
+        const service   = document.querySelector('input[name="service"]:checked')?.value;
+        const dateDebut = document.getElementById('inputDateDebut').value;
+        const preview   = document.getElementById('echeancePreview');
+        const dateEl    = document.getElementById('echeanceDate');
+
+        if (!service || !dateDebut) {
+            preview.style.display = 'none';
+            return;
+        }
+
+        const echeance = new Date(dateDebut);
+        if (service === 'Hébergement') {
+            echeance.setFullYear(echeance.getFullYear() + 1);
+        } else {
+            echeance.setMonth(echeance.getMonth() + 1);
+        }
+
+        dateEl.textContent = formatDate(echeance);
+        preview.style.display = 'block';
+    }
+
+    document.getElementById('inputDateDebut').addEventListener('change', updateEcheancePreview);
+
+    /* ============================================================
+       FILTRES
+       ============================================================ */
+    document.getElementById('searchInput').addEventListener('input', renderClients);
+    document.getElementById('filterService').addEventListener('change', renderClients);
+    document.getElementById('filterStatut').addEventListener('change', renderClients);
+
+    /* ============================================================
+       AJOUT D'UN SERVICE À UN CLIENT EXISTANT
+       ============================================================ */
+    function openAddService(clientId) {
+        const client = DB.clients.find(c => c.id === clientId);
+        if (!client) return;
+        document.getElementById('addServiceClientId').value = clientId;
+        document.getElementById('addServiceClientName').textContent = client.nom;
+        document.getElementById('addServiceForm').reset();
+        document.querySelectorAll('#addServiceForm .service-card').forEach(c => c.classList.remove('selected'));
+        openModal('addService');
+    }
+
+    document.querySelectorAll('#addServiceForm .service-card').forEach(card => {
+        card.addEventListener('click', () => {
+            document.querySelectorAll('#addServiceForm .service-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            card.querySelector('input').checked = true;
+        });
+    });
+
+    document.getElementById('addServiceForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const clientId = parseInt(document.getElementById('addServiceClientId').value, 10);
+        const service = document.querySelector('input[name="addService"]:checked')?.value;
+        const montant = parseFloat(document.getElementById('addServiceMontant').value);
+
+        if (!service) return showToast('Choisissez un service', 'error');
+        if (isNaN(montant) || montant < 0) return showToast('Montant invalide', 'error');
+
+        ajouterService(clientId, service, montant);
+        renderClients();
+        updateStats();
+        closeModal('addService');
+        showToast(`✅ Service ${service} ajouté`, 'success');
+    });
+
+    /* ============================================================
+       INITIALISATION
+       ============================================================ */
+    renderClients();
+    updateStats();
+</script>
+
+</body>
+</html>
